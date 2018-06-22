@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>职位管理</title>
+<link rel="stylesheet" href="../../plugins/layui/css/layui.css" media="all">
+<link rel="stylesheet" href="../../plugins/build/css/comm.css" media="all">
+<script src="../../plugins/layui/layui.js"></script>
+</head>
+<body>
+	<div class="layui-fluid margin-top10">
+		<form class="layui-form" action="">
+			<input type="hidden" name="sortType" value="1">
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">所属部门</label>
+					<div class="layui-input-inline">
+						<select name="departmentId" class="departmentId">
+							<option value="">全部</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">是否有效</label>
+					<div class="layui-input-inline">
+						<select name="isValid">
+							<option value="-1">全部</option>
+							<option value="0">无效</option>
+							<option value="1">有效</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-inline">
+					<button class="layui-btn layui-btn-radius" lay-submit=""
+						lay-filter="queryMain" id="queryMainBtn">
+						<i class="layui-icon">&#xe615;</i>查询
+					</button>
+				</div>
+			</div>
+		</form>
+		<hr class="layui-bg-orange" />
+		<div class="layui-col-md12">
+			<button class="layui-btn layui-btn-radius hide operateBtn"
+				data-power="add">
+				<i class="layui-icon">&#xe654;</i>添加
+			</button>
+			<button class="layui-btn layui-btn-radius hide operateBtn"
+				data-power="edit">
+				<i class="layui-icon">&#xe642;</i>修改
+			</button>
+			<table id="tabMain" lay-filter="tabFilter"></table>
+		</div>
+	</div>
+</body>
+<!-- 弹出层要放在body外面 -->
+<!-- 新增开始 -->
+<div class="addInfoDiv" style="display: none;">
+	<form class="layui-form layui-tab-content" action="" id="addInfoForm">
+		<div class="layui-form-item">
+			<label class="layui-form-label">职位名称</label>
+			<div class="layui-input-inline">
+				<input type="text" name="positionName" lay-verify="positionName"
+					autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<input type="hidden" name="departmentName" class="departmentName">
+			<label class="layui-form-label">所属部门</label>
+			<div class="layui-input-inline">
+				<select name="departmentId" class="departmentId"
+					lay-verify="departmentId" lay-filter="departmentId">
+					<option value="">请选择</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">职位描述</label>
+			<div class="layui-input-inline">
+				<textarea placeholder="请输入内容" class="layui-textarea"
+					name="description"></textarea>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">是否有效</label>
+			<div class="layui-input-inline">
+				<select name="isValid">
+					<option value="0">无效</option>
+					<option value="1">有效</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit lay-filter="addInfoBtn">提交</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+		</div>
+	</form>
+</div>
+<!-- 新增结束 -->
+<!-- 修改开始 -->
+<div class="editInfoDiv" style="display: none;">
+	<form class="layui-form layui-tab-content" action="" id="editInfoForm">
+		<input type="hidden" name="id">
+		<div class="layui-form-item">
+			<label class="layui-form-label">职位名称</label>
+			<div class="layui-input-inline">
+				<input type="text" name="positionName" lay-verify="positionName"
+					autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<input type="hidden" name="departmentName" class="departmentName">
+			<label class="layui-form-label">所属部门</label>
+			<div class="layui-input-inline">
+				<select name="departmentId" class="departmentId"
+					lay-verify="departmentId" lay-filter="departmentId">
+					<option value="">请选择</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">职位描述</label>
+			<div class="layui-input-inline">
+				<textarea placeholder="请输入内容" class="layui-textarea"
+					name="description"></textarea>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">是否有效</label>
+			<div class="layui-input-inline">
+				<select name="isValid">
+					<option value="0">无效</option>
+					<option value="1">有效</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit lay-filter="editInfoBtn">提交</button>
+				<button class="layui-btn layui-btn-primary" lay-submit lay-filter="cancelBtn">取消</button>
+			</div>
+		</div>
+	</form>
+</div>
+<!-- 修改结束 -->
+<script>
+	/* 以下url路径都是相对于当前页面的路径 */
+	/* 公共参数开始 */
+	var $;//全局jquery
+	var basePath='../../../';//相对路径 
+	var baseHeight='auto';//新增修改弹出页面的高度设置
+	var queryMainUrl = basePath+'sys/position/getPageList';//列表查询地址
+	var addInfoUrl = basePath+'sys/position/create';//新增地址
+	var editInfoUrl = basePath+'sys/position/update';//修改地址
+	var addInfoTitle = '新增职位信息';//新增弹框标题
+	var editInfoTitle = '修改职位信息';//修改弹框标题
+	/* 公共参数结束 */
+	layui.use('table', function() {
+		$ = layui.jquery;//引入jquery
+		var form = layui.form;//引入form
+		var table = layui.table;
+		var mainTabForm = {
+			sortType : 1
+		};// 默认按创建时间排序
+		//第一个实例
+		table.render({
+			id : 'mainTable',
+			elem : '#tabMain',
+			height : 'full-120',
+			url : queryMainUrl, //数据接口
+			method : 'post', //传参方式
+			where : {
+				queryJson : JSON.stringify(mainTabForm)
+			},
+			page : true, //开启分页
+			cols : [ [ //表头
+			{
+				field : '',
+				type : 'checkbox',
+				fixed : 'left'
+			}, {
+				field : '序号',
+				title : '序号',
+				align : 'center',
+				type : 'numbers'
+			}, {
+				field : 'positionName',
+				title : '职位名称',
+				align : 'center'
+			}, {
+				field : 'departmentName',
+				title : '所属部门',
+				align : 'center'
+			}, {
+				field : 'description',
+				title : '职位描述',
+				align : 'center'
+			}, {
+				field : 'updateTime',
+				title : '修改时间',
+				align : 'center'
+			}, {
+				field : 'createTime',
+				title : '创建时间',
+				align : 'center'
+			}, {
+				field : 'isValid',
+				title : '是否有效',
+				align : 'center'
+			} ] ],
+			done : function(resData, page, count) {
+				//如果是异步请求数据方式，resData即为你接口返回的信息。  
+				//如果是直接赋值的方式，resData即为：{data: [], count: 99} data为当前页数据、count为数据总长度 
+				if(resData.responseCode!=undefined && resData.responseCode==1){
+					toLogin();//超时重新登录
+				}else{
+					var powerId=$('.layui-this[lay-id]', parent.document)[0].getAttribute('lay-id');//获取导航id即powerId
+					getUserPower(powerId);//用户权限
+				}
+				$("[data-field='isValid']").children().each(function() {
+					if ($(this).text() == '0') {
+						$(this).text("无效");
+					} else if ($(this).text() == '1') {
+						$(this).text("有效");
+					}
+				});
+			}
+		});
+		//部门列表查询
+		$.ajax({
+			url : basePath+'sys/department/getList',
+			type : 'post',
+			dataType : 'json',
+			contentType : 'application/json',
+			data : JSON.stringify({
+				limitType : 1,
+				isValid : 1
+			}),
+			success : function(resData) {
+				for (var i = 0; i < resData.length; i++) {
+					$('.departmentId').append("<option value="+resData[i].id+">" + resData[i].departmentName + "</option>");
+				}
+				form.render("select");//渲染
+			}
+		});
+		form.on('select(departmentId)', function(data) {
+			if (data.value != "") {
+				$('.departmentName').val(data.elem[data.elem.selectedIndex].text);
+			} else {
+				$('.departmentName').val('');
+			}
+		});
+		// 自定义验证规则
+		form.verify({
+			positionName : function(value) {
+				if (value.length == 0) {
+					return '职位名称不能为空';
+				}
+			},
+			departmentId : function(value) {
+				if (value.length == 0) {
+					return '请选择所属部门';
+				}
+			}
+		});
+	});
+</script>
+<script src="../../plugins/build/js/comminfo.js"></script>
+</html>

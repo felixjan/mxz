@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>登录</title>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="./static/plugins/layui/css/layui.css" media="all">
+<link rel="stylesheet" href="./static/plugins/build/css/login.css" media="all">
+</head>
+<body>
+	<div class="video_mask"></div>
+	<div class="login">
+		<h1>管理登录</h1>
+		<form class="layui-form">
+			<div class="layui-form-item">
+				<input class="layui-input" name="userName" placeholder="用户名"
+					lay-verify="required" type="text" autocomplete="off">
+			</div>
+			<div class="layui-form-item">
+				<input class="layui-input" name="password" placeholder="密码"
+					lay-verify="required" type="password" autocomplete="off">
+			</div>
+			<div class="layui-form-item form_code">
+				<input class="layui-input" name="verifyCode" placeholder="验证码"
+					lay-verify="required" type="text" autocomplete="off">
+				<div class="code">
+					<img src="./login/getVerifyCode" width="116" height="36" id="imgCode" onclick="getCode();">
+				</div>
+			</div>
+			<button class="layui-btn login_btn" lay-submit lay-filter="login">登录</button>
+		</form>
+	</div>
+	<script type="text/javascript" src="./static/plugins/layui/layui.js"></script>
+	<script type="text/javascript" src="./static/plugins/build/js/login.js"></script>
+</body>
+</html>

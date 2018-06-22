@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>角色管理</title>
+<link rel="stylesheet" href="../../plugins/layui/css/layui.css" media="all">
+<link rel="stylesheet" href="../../plugins/build/css/comm.css" media="all">
+<script src="../../plugins/layui/layui.js"></script>
+</head>
+<body>
+	<div class="layui-fluid margin-top10">
+		<form class="layui-form" action="">
+			<input type="hidden" name="sortType" value="1">
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">角色名</label>
+					<div class="layui-input-inline">
+						<input type="text" name="roleName" autocomplete="off"
+							class="layui-input">
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">是否有效</label>
+					<div class="layui-input-inline">
+						<select name="isValid">
+							<option value="-1">全部</option>
+							<option value="0">无效</option>
+							<option value="1">有效</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-inline">
+					<button class="layui-btn layui-btn-radius" lay-submit=""
+						lay-filter="queryMain" id="queryMainBtn">
+						<i class="layui-icon">&#xe615;</i>查询
+					</button>
+				</div>
+			</div>
+		</form>
+		<hr class="layui-bg-orange" />
+		<div class="layui-col-md12">
+			<button class="layui-btn layui-btn-radius hide operateBtn"
+				data-power="add">
+				<i class="layui-icon">&#xe654;</i>添加
+			</button>
+			<button class="layui-btn layui-btn-radius hide operateBtn"
+				data-power="edit">
+				<i class="layui-icon">&#xe642;</i>修改
+			</button>
+			<table id="tabMain" lay-filter="tabFilter"></table>
+		</div>
+	</div>
+</body>
+<!-- 弹出层要放在body外面 -->
+<!-- 新增开始 -->
+<div class="addInfoDiv" style="display: none;">
+	<form class="layui-form layui-tab-content" action="" id="addInfoForm">
+		<div class="layui-form-item">
+			<label class="layui-form-label">角色名</label>
+			<div class="layui-input-inline">
+				<input type="text" name="roleName" lay-verify="roleName"
+					autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">角色描述</label>
+			<div class="layui-input-inline">
+				<textarea placeholder="请输入内容" class="layui-textarea"
+					name="description"></textarea>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">是否有效</label>
+			<div class="layui-input-inline">
+				<select name="isValid">
+					<option value="0">无效</option>
+					<option value="1">有效</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit lay-filter="addInfoBtn">提交</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+		</div>
+	</form>
+</div>
+<!-- 新增结束 -->
+<!-- 修改开始 -->
+<div class="editInfoDiv" style="display: none;">
+	<form class="layui-form layui-tab-content" action="" id="editInfoForm">
+		<input type="hidden" name="id">
+		<div class="layui-form-item">
+			<label class="layui-form-label">角色名</label>
+			<div class="layui-input-inline">
+				<input type="text" name="roleName" lay-verify="roleName"
+					autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">角色描述</label>
+			<div class="layui-input-inline">
+				<textarea placeholder="请输入内容" class="layui-textarea"
+					name="description"></textarea>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">是否有效</label>
+			<div class="layui-input-inline">
+				<select name="isValid">
+					<option value="0">无效</option>
+					<option value="1">有效</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit lay-filter="editInfoBtn">提交</button>
+				<button class="layui-btn layui-btn-primary" lay-submit lay-filter="cancelBtn">取消</button>
+			</div>
+		</div>
+	</form>
+</div>
+<!-- 修改结束 -->
+<!-- 树形权限开始 -->
+<div class="editPowerDiv" style="display: none;">
+	<form class="layui-form layui-tab-content" id="editPowerForm">
+		<input type="hidden" name="roleId" id="roleId">
+		<div id="xtree1" style="overflow:auto; height:350px;"></div>
+		<div class="layui-form-item">
+			<hr class="layui-bg-orange"/>
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit lay-filter="editPowerBtn">提交</button>
+				<button class="layui-btn layui-btn-primary" lay-submit lay-filter="cancelBtn">取消</button>
+			</div>
+		</div>
+	</form>
+</div>
+<!-- 树形权限结束 -->
+<script type="text/html" id="barMain">
+  <button class="layui-btn layui-btn-xs hide" lay-event="editPower" data-power="edit">分配权限</button>
+</script>
+<!--引用xtree-->
+<script src="../../plugins/layui-xtree/layui-xtree.js"></script>
+<script>
+	/* 以下url路径都是相对于当前页面的路径 */
+	/* 公共参数开始 */
+	var $;//全局jquery
+	var basePath='../../../';//相对路径
+	var baseHeight='auto';//新增修改弹出页面的高度设置
+	var queryMainUrl = basePath+'sys/role/getPageList';//列表查询地址
+	var addInfoUrl = basePath+'sys/role/create';//新增地址
+	var editInfoUrl = basePath+'sys/role/update';//修改地址
+	var addInfoTitle = '新增角色信息';//新增弹框标题
+	var editInfoTitle = '修改角色信息';//修改弹框标题
+	/* 公共参数结束 */
+	layui.use('table', function() {
+		$ = layui.jquery;//引入jquery
+		var form = layui.form;//引入form
+		var table = layui.table;
+		var mainTabForm = {
+			sortType : 1
+		};// 默认按创建时间排序
+		//第一个实例
+		table.render({
+			id : 'mainTable',
+			elem : '#tabMain',
+			height : 'full-120',
+			url : queryMainUrl, //数据接口
+			method : 'post', //传参方式
+			where : {
+				queryJson : JSON.stringify(mainTabForm)
+			},
+			page : true, //开启分页
+			cols : [ [ //表头
+			{
+				field : '',
+				type : 'checkbox',
+				fixed : 'left'
+			}, {
+				field : '序号',
+				title : '序号',
+				align : 'center',
+				type : 'numbers'
+			}, {
+				field : 'roleName',
+				title : '角色名',
+				align : 'center'
+			}, {
+				field : 'description',
+				title : '角色描述',
+				align : 'center'
+			}, {
+				field : 'updateTime',
+				title : '修改时间',
+				align : 'center'
+			}, {
+				field : 'createTime',
+				title : '创建时间',
+				align : 'center'
+			}, {
+				field : 'isValid',
+				title : '是否有效',
+				align : 'center'
+			} , {
+				field : '操作',
+				title : '操作',
+				align : 'center',
+				toolbar: '#barMain'
+			}] ],
+			done : function(resData, page, count) {
+				//如果是异步请求数据方式，resData即为你接口返回的信息。  
+				//如果是直接赋值的方式，resData即为：{data: [], count: 99} data为当前页数据、count为数据总长度 
+				if(resData.responseCode!=undefined && resData.responseCode==1){
+					toLogin();//超时重新登录
+				}else{
+					var powerId=$('.layui-this[lay-id]', parent.document)[0].getAttribute('lay-id');//获取导航id即powerId
+					getUserPower(powerId);//用户权限
+				}
+				$("[data-field='isValid']").children().each(function() {
+					if ($(this).text() == '0') {
+						$(this).text("无效");
+					} else if ($(this).text() == '1') {
+						$(this).text("有效");
+					}
+				});
+			}
+		});
+		// 自定义验证规则
+		form.verify({
+			roleName : function(value) {
+				if (value.length == 0) {
+					return '角色名不能为空';
+				}
+			}
+		});
+		var xtree1;
+		//监听tabMain工具条
+		table.on('tool(tabFilter)', function(obj) { //注：tool是工具条事件名，tabFilter是table原始容器的属性 lay-filter="对应的值"
+			var data = obj.data ;//获得当前行数据
+			var layEvent = obj.event; //获得 lay-event 对应的值
+			if (layEvent === 'editPower') {
+				$.ajax({
+					url : basePath+'sys/role/getPowerList',
+					type : 'post',
+					dataType : 'json',
+					contentType : 'application/json',
+					data : JSON.stringify({
+						roleId : data.id,
+						limitType : 1
+					}),
+					success : function(resData) {
+						if(resData.responseStatus==false){
+							getResData(resData,"查询失败!");
+						}else{
+							//最完整的参数用法
+							xtree1 = new layuiXtree({
+								elem : 'xtree1', //必填三兄弟之老大
+								form : form, //必填三兄弟之这才是真老大
+								data : resData.responseData.powerList, //必填三兄弟之这也算是老大
+								isopen : false, //加载完毕后的展开状态，默认值：true
+								ckall : false //启用全选功能，默认值：false
+							});
+							$('.editPowerDiv').show();
+							$('#roleId').val(data.id);
+							layer.open({
+								type : 1,
+								title : '角色分配权限',
+								area: ['auto','80%'],
+								content : $('#editPowerForm'),// 这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+								end : function() {
+									$('.editPowerDiv').hide();
+								}
+							});
+						}
+					}
+				});
+			}
+		});
+		// 监听角色权限提交
+		form.on('submit(editPowerBtn)', function(data) {
+			layer.confirm('是否确认!', {
+				btn : [ '确定', '取消' ]
+			}, function(index, layero) {
+				var powerArr = new Array();
+				var oCks = xtree1.GetAllChecked(); //这是方法
+				for (var i = 0; i < oCks.length; i++) {
+					powerArr[i] = oCks[i].value;
+				}
+				$.ajax({
+					url : basePath+'sys/role/power/create',
+					type : 'post',
+					dataType : 'json',
+					contentType : 'application/json',
+					data : JSON.stringify({
+						roleId : $('#roleId').val(),
+						powerList : powerArr
+					}),
+					success : function(resData) {
+						getResData(resData,"分配权限成功!");
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+						layer.alert('系统错误，请联系管理员！');
+					}
+				}); 
+			});
+			return false;
+		});
+	});
+</script>
+<script src="../../plugins/build/js/comminfo.js"></script>
+</html>

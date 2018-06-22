@@ -1,0 +1,42 @@
+1.	采用 layui-row 来定义行，如：<div class="layui-row"></div>
+2.	采用类似 layui-col-md* 这样的预设类来定义一组列（column），且放在行（row）内。其中：
+	变量md 代表的是不同屏幕下的标记（可选值见下文）
+	变量* 代表的是该列所占用的12等分数（如6/12），可选值为 1 - 12
+	如果多个列的“等分数值”总和等于12，则刚好满行排列。如果大于12，多余的列将自动另起一行。
+3.	列可以同时出现最多四种不同的组合，分别是：xs（超小屏幕，如手机）、sm（小屏幕，如平板）、md（桌面中等屏幕）、lg（桌面大型屏幕），以呈现更加动态灵活的布局。
+4.	可对列追加类似 layui-col-space5、 layui-col-md-offset3 这样的预设类来定义列的间距和偏移。
+5.	最后，在列（column）元素中放入你自己的任意元素填充内容，完成布局！
+<div class="layui-col-xs6 layui-col-sm6 layui-col-md4 layui-col-lg2">
+      移动：6/12(手机<768px) | 平板：6/12(平板≥768px) | 中等桌面：4/12中等屏幕(桌面≥992px) |大型桌面2/12(桌面≥1200px)
+</div>
+layer.close(layer.index); //关闭当前弹框
+layer.closeAll(); //关闭所有弹框
+layer.closeAll('dialog'); //关闭信息框
+layer.closeAll('page'); //关闭所有页面层
+layer.closeAll('iframe'); //关闭所有的iframe层
+layer.closeAll('loading'); //关闭加载层
+layer.closeAll('tips'); //关闭所有的tips层
+
+_win = $(window);//原始
+_doc = $(document);
+
+<table id="tabMain" lay-filter="tabFilter"></table>
+lay-filter是做table监听用的
+//监听单元格事件
+table.on('tool(tabFilter)', function(obj) {
+	var data = obj.data;
+	if (obj.event === 'on') {
+		layer.prompt({
+			formType : 2,
+			title : '修改 用户名为 [' + data.userName + '] 的用户',
+			value : data.userName
+		}, function(value, index) {
+			layer.close(index);
+			//这里一般是发送修改的Ajax请求
+			//同步更新表格和缓存对应的值
+			obj.update({
+				userName : value
+			});
+		});
+	}
+});

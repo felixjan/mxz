@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>员工管理</title>
+<link rel="stylesheet" href="../../plugins/layui/css/layui.css"
+	media="all">
+</head>
+<!-- 
+1.	采用 layui-row 来定义行，如：<div class="layui-row"></div>
+2.	采用类似 layui-col-md* 这样的预设类来定义一组列（column），且放在行（row）内。其中：
+	变量md 代表的是不同屏幕下的标记（可选值见下文）
+	变量* 代表的是该列所占用的12等分数（如6/12），可选值为 1 - 12
+	如果多个列的“等分数值”总和等于12，则刚好满行排列。如果大于12，多余的列将自动另起一行。
+3.	列可以同时出现最多四种不同的组合，分别是：xs（超小屏幕，如手机）、sm（小屏幕，如平板）、md（桌面中等屏幕）、lg（桌面大型屏幕），以呈现更加动态灵活的布局。
+4.	可对列追加类似 layui-col-space5、 layui-col-md-offset3 这样的预设类来定义列的间距和偏移。
+5.	最后，在列（column）元素中放入你自己的任意元素填充内容，完成布局！
+<div class="layui-col-xs6 layui-col-sm6 layui-col-md4 layui-col-lg2">
+      移动：6/12(手机<768px) | 平板：6/12(平板≥768px) | 中等桌面：4/12中等屏幕(桌面≥992px) |大型桌面2/12(桌面≥1200px)
+</div>
+ -->
+<body>
+	<div class="layui-fluid" style="margin-top: 10px;">
+		<form class="layui-form" action="">
+			<div class="layui-form-item">
+				<div class="layui-col-md3">
+					<label class="layui-form-label">用户名</label>
+					<div class="layui-input-block">
+						<input type="text" name="userName" lay-verify="userName"
+							autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-col-md2">
+					<label class="layui-form-label">状态</label>
+					<div class="layui-input-block">
+						<select name="status">
+							<option value="-1">全部</option>
+							<option value="1">在职</option>
+							<option value="2">离职</option>
+							<option value="3">冻结</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-col-md2">
+					<label class="layui-form-label">是否有效</label>
+					<div class="layui-input-block">
+						<select name="isValid">
+							<option value="-1">全部</option>
+							<option value="0">无效</option>
+							<option value="1">有效</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-col-md3">
+					<button class="layui-btn layui-btn-radius" lay-submit=""
+						lay-filter="query">
+						<i class="layui-icon">&#xe615;</i>查询
+					</button>
+					<button class="layui-btn layui-btn-radius">
+						<i class="layui-icon">&#xe669;</i>刷新
+					</button>
+				</div>
+			</div>
+		</form>
+		<hr class="layui-bg-orange" />
+		<div class="layui-col-md12">
+			<button class="layui-btn layui-btn-radius" lay-event="add">
+				<i class="layui-icon">&#xe654;</i>添加
+			</button>
+			<button class="layui-btn layui-btn-radius" lay-event="edit">
+				<i class="layui-icon">&#xe642;</i>修改
+			</button>
+			<table id="tabMain" lay-filter="tabFilter"></table>
+		</div>
+	</div>
+	<script src="../../plugins/layui/layui.js"></script>
+	<script>
+		layui.use('table', function() {
+			var $ = layui.jquery;//引入jquery
+			var form = layui.form;//引入form
+			var table = layui.table;
+			var objForm = {};//可以添加默认查询条件
+			//第一个实例
+			table.render({
+				id : 'mainTable',
+				elem : '#tabMain',
+				height : 'full-120',
+				url : '../../../sys/user/getPageList', //数据接口
+				method : 'post', //传参方式
+				where : {
+					queryJson : JSON.stringify(objForm)
+				},
+				page : true, //开启分页
+				cols : [ [ //表头
+				{
+					event : 'on',
+					field : '序号',
+					title : '序号',
+					align : 'center',
+					fixed : 'left',
+					type : 'numbers'
+				}, {
+					event : 'on',
+					field : 'userName',
+					title : '用户名',
+					align : 'center'
+				}, {
+					event : 'on',
+					field : 'realName',
+					title : '员工姓名',
+					align : 'center'
+				}, {
+					event : 'on',
+					field : 'departmentName',
+					title : '所属部门',
+					align : 'center'
+				}, {
+					event : 'on',
+					field : 'positionName',
+					title : '职位',
+					align : 'center'
+				}, {
+					event : 'on',
+					field : 'sex',
+					title : '性别',
+					align : 'center'
+				}, {
+					event : 'on',
+					field : 'mobile',
+					title : '手机号',
+					align : 'center'
+				}, {
+					event : 'on',
+					field : 'status',
+					title : '状态',
+					align : 'center'
+				}, {
+					event : 'on',
+					field : 'updateTime',
+					title : '修改时间',
+					align : 'center'
+				}, {
+					event : 'on',
+					field : 'createTime',
+					title : '创建时间',
+					align : 'center'
+				}, {
+					event : 'on',
+					field : 'isValid',
+					title : '是否有效',
+					align : 'center'
+				} ] ],
+				done : function(res, page, count) {
+					//如果是异步请求数据方式，res即为你接口返回的信息。  
+					//如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度  
+					$("[data-field='sex']").children().each(function() {
+						if ($(this).text() == '1') {
+							$(this).text("男");
+						} else if ($(this).text() == '2') {
+							$(this).text("女");
+						}
+					});
+					$("[data-field='status']").children().each(function() {
+						if ($(this).text() == '1') {
+							$(this).text("在职");
+						} else if ($(this).text() == '2') {
+							$(this).text("离职");
+						} else if ($(this).text() == '3') {
+							$(this).text("冻结");
+						}
+					});
+					$("[data-field='isValid']").children().each(function() {
+						if ($(this).text() == '0') {
+							$(this).text("无效");
+						} else if ($(this).text() == '1') {
+							$(this).text("有效");
+						}
+					});
+					console.log(res);
+				}
+			});
+			//监听单元格事件
+			table.on('tool(tabFilter)', function(obj) {
+				var data = obj.data;
+				if (obj.event === 'on') {
+					layer.prompt({
+						formType : 2,
+						title : '修改 用户名为 [' + data.userName + '] 的用户',
+						value : data.userName
+					}, function(value, index) {
+						layer.close(index);
+						//这里一般是发送修改的Ajax请求
+						//同步更新表格和缓存对应的值
+						obj.update({
+							userName : value
+						});
+					});
+				}
+			});
+			//from表单监听提交
+			form.on('submit(query)', function(data) {
+				table.reload('mainTable', {
+					page : {
+						curr : 1
+					},//重新从第 1 页开始
+					where : {
+						queryJson : JSON.stringify(data.field)
+					}
+				});
+				return false;
+			});
+		});
+	</script>
+</body>
+</html>

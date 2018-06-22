@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.comm.cms.mapper.CmsCustomerMapper">
+	 <!-- 实体映射 -->
+	 <resultMap id="BaseResultMap" type="com.comm.cms.pojo.CmsCustomer">
+		 <!--主键id-->
+		 <result column="id" property="id" jdbcType="CHAR"/>
+		 <!--用户名-->
+		 <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+		 <!--登录名-->
+		 <result column="login_name" property="loginName" jdbcType="VARCHAR"/>
+		 <!--密码-->
+		 <result column="password" property="password" jdbcType="VARCHAR"/>
+		 <!--真实姓名-->
+		 <result column="real_name" property="realName" jdbcType="VARCHAR"/>
+		 <!--昵称-->
+		 <result column="nick_name" property="nickName" jdbcType="VARCHAR"/>
+		 <!--会员头像-->
+		 <result column="logo" property="logo" jdbcType="VARCHAR"/>
+		 <!--会员类型-->
+		 <result column="type" property="type" jdbcType="INTEGER"/>
+		 <!--注册来源：wap|pc|ios|android|ipad|pad-->
+		 <result column="source" property="source" jdbcType="CHAR"/>
+		 <!--手机号-->
+		 <result column="phone" property="phone" jdbcType="VARCHAR"/>
+		 <!--电子邮箱-->
+		 <result column="email" property="email" jdbcType="VARCHAR"/>
+		 <!--QQ号-->
+		 <result column="qq" property="qq" jdbcType="VARCHAR"/>
+		 <!--微信号-->
+		 <result column="weixin" property="weixin" jdbcType="VARCHAR"/>
+		 <!--性别(1.男2.女)-->
+		 <result column="sex" property="sex" jdbcType="INTEGER"/>
+		 <!--生日-->
+		 <result column="birthday" property="birthday" jdbcType="TIMESTAMP"/>
+		 <!--国籍-->
+		 <result column="nationality" property="nationality" jdbcType="INTEGER"/>
+		 <!--证件类型1.身份证2.护照3.军官证4.驾照5.回乡证6.其他-->
+		 <result column="card_type" property="cardType" jdbcType="INTEGER"/>
+		 <!--证件号码-->
+		 <result column="card_num" property="cardNum" jdbcType="VARCHAR"/>
+		 <!--国家id-->
+		 <result column="country_id" property="countryId" jdbcType="INTEGER"/>
+		 <!--国家-->
+		 <result column="country_name" property="countryName" jdbcType="VARCHAR"/>
+		 <!--省id-->
+		 <result column="province_id" property="provinceId" jdbcType="INTEGER"/>
+		 <!--省份-->
+		 <result column="province_name" property="provinceName" jdbcType="VARCHAR"/>
+		 <!--市id-->
+		 <result column="city_id" property="cityId" jdbcType="INTEGER"/>
+		 <!--城市-->
+		 <result column="city_name" property="cityName" jdbcType="VARCHAR"/>
+		 <!--区id-->
+		 <result column="district_id" property="districtId" jdbcType="INTEGER"/>
+		 <!--地区-->
+		 <result column="district_name" property="districtName" jdbcType="VARCHAR"/>
+		 <!--地址-->
+		 <result column="address" property="address" jdbcType="VARCHAR"/>
+		 <!--修改时间-->
+		 <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+		 <!--创建时间-->
+		 <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+		 <!--是否有效:0.无效1.有效-->
+		 <result column="is_valid" property="isValid" jdbcType="INTEGER"/>
+	 </resultMap>
+	 <!-- 通用查询条件-->
+	 <sql id="sql_where_clause">
+		 <if test="userName != null and userName != ''">
+			 and user_name = #{userName}
+		 </if>
+		 <if test="loginName != null and loginName != ''">
+			 and login_name = #{loginName}
+		 </if>
+		 <if test="password != null and password != ''">
+			 and password = #{password}
+		 </if>
+		 <if test="realName != null and realName != ''">
+			 and real_name = #{realName}
+		 </if>
+		 <if test="nickName != null and nickName != ''">
+			 and nick_name = #{nickName}
+		 </if>
+		 <if test="logo != null and logo != ''">
+			 and logo = #{logo}
+		 </if>
+		 <if test="type != null and type != -1">
+			 and type = #{type}
+		 </if>
+		 <if test="source != null and source != ''">
+			 and source = #{source}
+		 </if>
+		 <if test="phone != null and phone != ''">
+			 and phone = #{phone}
+		 </if>
+		 <if test="email != null and email != ''">
+			 and email = #{email}
+		 </if>
+		 <if test="qq != null and qq != ''">
+			 and qq = #{qq}
+		 </if>
+		 <if test="weixin != null and weixin != ''">
+			 and weixin = #{weixin}
+		 </if>
+		 <if test="sex != null and sex != -1">
+			 and sex = #{sex}
+		 </if>
+		 <if test="birthday != null and birthday != ''">
+			 and birthday = #{birthday}
+		 </if>
+		 <if test="nationality != null and nationality != -1">
+			 and nationality = #{nationality}
+		 </if>
+		 <if test="cardType != null and cardType != -1">
+			 and card_type = #{cardType}
+		 </if>
+		 <if test="cardNum != null and cardNum != ''">
+			 and card_num = #{cardNum}
+		 </if>
+		 <if test="countryId != null and countryId != -1">
+			 and country_id = #{countryId}
+		 </if>
+		 <if test="countryName != null and countryName != ''">
+			 and country_name = #{countryName}
+		 </if>
+		 <if test="provinceId != null and provinceId != -1">
+			 and province_id = #{provinceId}
+		 </if>
+		 <if test="provinceName != null and provinceName != ''">
+			 and province_name = #{provinceName}
+		 </if>
+		 <if test="cityId != null and cityId != -1">
+			 and city_id = #{cityId}
+		 </if>
+		 <if test="cityName != null and cityName != ''">
+			 and city_name = #{cityName}
+		 </if>
+		 <if test="districtId != null and districtId != -1">
+			 and district_id = #{districtId}
+		 </if>
+		 <if test="districtName != null and districtName != ''">
+			 and district_name = #{districtName}
+		 </if>
+		 <if test="address != null and address != ''">
+			 and address = #{address}
+		 </if>
+		 <if test="updateTime != null and updateTime != ''">
+			 and update_time = #{updateTime}
+		 </if>
+		 <if test="createTime != null and createTime != ''">
+			 and create_time = #{createTime}
+		 </if>
+		 <if test="isValid != null and isValid != -1">
+			 and is_valid = #{isValid}
+		 </if>
+	 </sql>
+	 <!-- 通用查询结果排序-->
+	 <sql id="sql_order_by_clause">
+		 <choose>
+			 <when test="sortType==1">
+				 order by create_time desc
+			 </when>
+		 </choose>
+	 </sql>
+	 <!-- 通用查询条数限制-->
+	 <sql id="sql_limit_clause">
+		 <choose>
+			 <when test="limitType==1">
+				 <if test="firstResult != null and maxResult != null">
+					 limit #{firstResult}, #{maxResult}
+				 </if>
+			 </when>
+			 <otherwise>limit 1</otherwise>
+		 </choose>
+	 </sql>
+	 <!-- 通用查询结果列-->
+	 <sql id="base_column_list">
+		 id,user_name,login_name,password,real_name,nick_name,logo,type,source,phone,email,qq,weixin,sex,birthday,nationality,card_type,card_num,country_id,country_name,province_id,province_name,city_id,city_name,district_id,district_name,address,update_time,create_time,is_valid
+	 </sql>
+	 <!-- 查询（根据主键ID查询） -->
+	 <select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		 select 
+		 <include refid="base_column_list" /> 
+		 from cms_customer
+		 where id = #{id,jdbcType=CHAR}
+	 </select>
+	 <!-- 删除 （根据主键ID删除）-->
+	 <delete id="delete" parameterType="java.lang.String">
+	    delete from cms_customer
+	    where id = #{id,jdbcType=VARCHAR}
+	 </delete>
+	 <!-- 添加 （动态匹配所有有值字段）-->
+	 <insert id="create" parameterType="java.util.HashMap">
+		 insert into cms_customer
+		 <trim prefix="(" suffix=")" suffixOverrides=",">
+			 id,
+			 <if test="userName != null">user_name,</if>
+			 <if test="loginName != null">login_name,</if>
+			 <if test="password != null">password,</if>
+			 <if test="realName != null">real_name,</if>
+			 <if test="nickName != null">nick_name,</if>
+			 <if test="logo != null">logo,</if>
+			 <if test="type != null">type,</if>
+			 <if test="source != null">source,</if>
+			 <if test="phone != null">phone,</if>
+			 <if test="email != null">email,</if>
+			 <if test="qq != null">qq,</if>
+			 <if test="weixin != null">weixin,</if>
+			 <if test="sex != null">sex,</if>
+			 <if test="birthday != null">birthday,</if>
+			 <if test="nationality != null">nationality,</if>
+			 <if test="cardType != null">card_type,</if>
+			 <if test="cardNum != null">card_num,</if>
+			 <if test="countryId != null">country_id,</if>
+			 <if test="countryName != null">country_name,</if>
+			 <if test="provinceId != null">province_id,</if>
+			 <if test="provinceName != null">province_name,</if>
+			 <if test="cityId != null">city_id,</if>
+			 <if test="cityName != null">city_name,</if>
+			 <if test="districtId != null">district_id,</if>
+			 <if test="districtName != null">district_name,</if>
+			 <if test="address != null">address,</if>
+			 update_time,
+			 create_time,
+			 <if test="isValid != null">is_valid,</if>
+		 </trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides=",">
+			 replace(uuid(),'-',''),
+			 <if test="userName != null">#{userName,jdbcType=VARCHAR},</if>
+			 <if test="loginName != null">#{loginName,jdbcType=VARCHAR},</if>
+			 <if test="password != null">#{password,jdbcType=VARCHAR},</if>
+			 <if test="realName != null">#{realName,jdbcType=VARCHAR},</if>
+			 <if test="nickName != null">#{nickName,jdbcType=VARCHAR},</if>
+			 <if test="logo != null">#{logo,jdbcType=VARCHAR},</if>
+			 <if test="type != null">#{type,jdbcType=INTEGER},</if>
+			 <if test="source != null">#{source,jdbcType=CHAR},</if>
+			 <if test="phone != null">#{phone,jdbcType=VARCHAR},</if>
+			 <if test="email != null">#{email,jdbcType=VARCHAR},</if>
+			 <if test="qq != null">#{qq,jdbcType=VARCHAR},</if>
+			 <if test="weixin != null">#{weixin,jdbcType=VARCHAR},</if>
+			 <if test="sex != null">#{sex,jdbcType=INTEGER},</if>
+			 <if test="birthday != null">#{birthday,jdbcType=TIMESTAMP},</if>
+			 <if test="nationality != null">#{nationality,jdbcType=INTEGER},</if>
+			 <if test="cardType != null">#{cardType,jdbcType=INTEGER},</if>
+			 <if test="cardNum != null">#{cardNum,jdbcType=VARCHAR},</if>
+			 <if test="countryId != null">#{countryId,jdbcType=INTEGER},</if>
+			 <if test="countryName != null">#{countryName,jdbcType=VARCHAR},</if>
+			 <if test="provinceId != null">#{provinceId,jdbcType=INTEGER},</if>
+			 <if test="provinceName != null">#{provinceName,jdbcType=VARCHAR},</if>
+			 <if test="cityId != null">#{cityId,jdbcType=INTEGER},</if>
+			 <if test="cityName != null">#{cityName,jdbcType=VARCHAR},</if>
+			 <if test="districtId != null">#{districtId,jdbcType=INTEGER},</if>
+			 <if test="districtName != null">#{districtName,jdbcType=VARCHAR},</if>
+			 <if test="address != null">#{address,jdbcType=VARCHAR},</if>
+			 now(),
+			 now(),
+			 <if test="isValid != null">#{isValid,jdbcType=INTEGER},</if>
+		 </trim>
+	 </insert>
+	 <!-- 修 改-->
+	 <update id="update" parameterType="java.util.HashMap">
+		 update cms_customer
+		 <set> 
+			 <if test="userName != null">user_name = #{userName,jdbcType=VARCHAR},</if>
+			 <if test="loginName != null">login_name = #{loginName,jdbcType=VARCHAR},</if>
+			 <if test="password != null">password = #{password,jdbcType=VARCHAR},</if>
+			 <if test="realName != null">real_name = #{realName,jdbcType=VARCHAR},</if>
+			 <if test="nickName != null">nick_name = #{nickName,jdbcType=VARCHAR},</if>
+			 <if test="logo != null">logo = #{logo,jdbcType=VARCHAR},</if>
+			 <if test="type != null">type = #{type,jdbcType=INTEGER},</if>
+			 <if test="source != null">source = #{source,jdbcType=CHAR},</if>
+			 <if test="phone != null">phone = #{phone,jdbcType=VARCHAR},</if>
+			 <if test="email != null">email = #{email,jdbcType=VARCHAR},</if>
+			 <if test="qq != null">qq = #{qq,jdbcType=VARCHAR},</if>
+			 <if test="weixin != null">weixin = #{weixin,jdbcType=VARCHAR},</if>
+			 <if test="sex != null">sex = #{sex,jdbcType=INTEGER},</if>
+			 <if test="birthday != null">birthday = #{birthday,jdbcType=TIMESTAMP},</if>
+			 <if test="nationality != null">nationality = #{nationality,jdbcType=INTEGER},</if>
+			 <if test="cardType != null">card_type = #{cardType,jdbcType=INTEGER},</if>
+			 <if test="cardNum != null">card_num = #{cardNum,jdbcType=VARCHAR},</if>
+			 <if test="countryId != null">country_id = #{countryId,jdbcType=INTEGER},</if>
+			 <if test="countryName != null">country_name = #{countryName,jdbcType=VARCHAR},</if>
+			 <if test="provinceId != null">province_id = #{provinceId,jdbcType=INTEGER},</if>
+			 <if test="provinceName != null">province_name = #{provinceName,jdbcType=VARCHAR},</if>
+			 <if test="cityId != null">city_id = #{cityId,jdbcType=INTEGER},</if>
+			 <if test="cityName != null">city_name = #{cityName,jdbcType=VARCHAR},</if>
+			 <if test="districtId != null">district_id = #{districtId,jdbcType=INTEGER},</if>
+			 <if test="districtName != null">district_name = #{districtName,jdbcType=VARCHAR},</if>
+			 <if test="address != null">address = #{address,jdbcType=VARCHAR},</if>
+			 update_time = now(),
+			 <if test="createTime != null and createTime != ''">create_time = #{createTime,jdbcType=TIMESTAMP},</if>
+			 <if test="isValid != null">is_valid = #{isValid,jdbcType=INTEGER},</if>
+		 </set>
+		 where id = #{id,jdbcType=CHAR}
+	 </update>
+	 <!-- 查询getList -->
+	 <select id="getList"  parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		 select 
+		 <include refid="base_column_list" /> 
+		 from cms_customer
+		 where 1=1 
+		 <include refid="sql_where_clause" />
+		 <include refid="sql_order_by_clause" />
+		 <include refid="sql_limit_clause" />
+	 </select>
+	 <!-- 查询geCount -->
+	 <select id="getCount" parameterType="java.util.HashMap" resultType="java.lang.Integer" >
+		 select count(1) 
+		 from cms_customer
+		 where 1=1 
+		 <include refid="sql_where_clause" />
+	 </select>
+
+</mapper>

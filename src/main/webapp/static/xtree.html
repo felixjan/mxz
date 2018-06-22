@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport"
+	content="width =device-width, initial-scale=1, maximum-scale=1" />
+<title>权限树</title>
+<meta charset="utf-8" />
+<!--layui的css-->
+<link href="./plugins/layui/css/layui.css" rel="stylesheet" />
+</head>
+<body>
+	<!--别忘记form 以及form的class-->
+	<form class="layui-form">
+		<h2>demo1、最完整的参数用法</h2>
+		<h3>请仔细的看参数吧</h3>
+		<div id="xtree1"></div>
+
+		<h2>提供的四种方法</h2>
+		<h3>下面事件作用于demo1，输出为console.log();</h3>
+		<h3>demo宽度适合与F12左右分屏</h3>
+		<div class="layui-form-item">
+			<input type="button" id="btn1"
+				value="获取全部[选中的][末级节点]原checkbox DOM对象，返回Array"
+				class="layui-btn layui-btn-fluid" />
+		</div>
+		<div class="layui-form-item">
+			<input type="button" id="btn2" value="获取全部原checkbox DOM对象，返回Array"
+				class="layui-btn layui-btn-fluid" />
+		</div>
+		<div class="layui-form-item">
+			<input type="button" id="btn3" value="更新数据，重新渲染"
+				class="layui-btn layui-btn-fluid" />
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">value值</label>
+			<div class="layui-input-block">
+				<input type="text" id="txt1" placeholder="如：jd1.1"
+					autocomplete="off" class="layui-input" value='jd1.1'>
+			</div>
+		</div>
+		<input type="button" id="btn4"
+			value="通过value值找父级DOM对象，顶级节点与错误值均返回null"
+			class="layui-btn layui-btn-fluid" />
+	</form>
+</body>
+</html>
+<!--先引用layui的js-->
+<script src="./plugins/layui/layui.js"></script>
+<!--引用xtree-->
+<script src="./plugins/layui-xtree/layui-xtree.js"></script>
+<script type="text/javascript">
+	//一套json数据下面会使用，同时供你参考
+	var json = [ {
+		title : "节点1",
+		value : "jd1",
+		data : [ {
+			title : "节点1.1",
+			value : "jd1.1",
+			data : [],
+			checked : true
+		}, {
+			title : "节点1.2",
+			value : "jd1.2",
+			data : [],
+			checked : true
+		}, {
+			title : "节点1.3",
+			value : "jd1.3",
+			data : [ {
+				title : "节点1.31",
+				value : "jd1.31",
+				data : [],
+				checked : true
+			}, {
+				title : "节点1.32",
+				value : "jd1.32",
+				data : [],
+				checked : true
+			}, {
+				title : "节点1.33",
+				value : "jd1.33",
+				data : []
+			}, {
+				title : "节点1.34",
+				value : "jd1.34",
+				data : []
+			} ]
+		}, {
+			title : "节点1.4",
+			value : "jd1.4",
+			data : []
+		} ]
+	}, {
+		title : "节点2",
+		value : "jd2",
+		data : [ {
+			title : "节点2.1",
+			value : "jd2.1",
+			data : []
+		}, {
+			title : "节点2.2",
+			value : "jd2.2",
+			data : []
+		}, {
+			title : "节点2.3",
+			value : "jd2.3",
+			data : []
+		}, {
+			title : "节点2.4",
+			value : "jd2.4",
+			data : []
+		} ]
+	}, {
+		title : "节点3",
+		value : "jd3",
+		data : []
+	}, {
+		title : "节点4",
+		value : "jd4",
+		data : []
+	} ];
+
+	//********************
+	//      正式开始
+	//********************
+
+	//layui 的 form 模块是必须的
+	layui.use([ 'form' ], function() {
+		var form = layui.form;
+		//3、最完整的参数用法
+		var xtree1 = new layuiXtree({
+			elem : 'xtree1' //必填三兄弟之老大
+			,
+			form : form //必填三兄弟之这才是真老大
+			,
+			data : json //必填三兄弟之这也算是老大
+			,
+			isopen : true //加载完毕后的展开状态，默认值：true
+			,
+			ckall : false //启用全选功能，默认值：false
+			,
+			ckallback : function() {
+			} //全选框状态改变后执行的回调函数
+			,click : function(data) { //节点选中状态改变事件监听，全选框有自己的监听事件
+				console.log(data.elem); //得到checkbox原始DOM对象
+				console.log(data.elem.checked); //开关是否开启，true或者false
+				console.log(data.value); //开关value值，也可以通过data.elem.value得到
+				console.log(data.othis); //得到美化后的DOM对象
+			}
+		});
+
+		//提供的方法们
+		//获取全部[选中的][末级节点]原checkbox DOM对象，返回Array
+		document.getElementById('btn1').onclick = function() {
+			var oCks = xtree1.GetAllChecked(); //这是方法
+			for (var i = 0; i < oCks.length; i++) {
+				console.log(oCks[i].value);
+			}
+		}
+
+		//获取全部原checkbox DOM对象，返回Array
+		document.getElementById('btn2').onclick = function() {
+			var oCks = xtree1.GetAllCheckBox(); //这是方法
+			for (var i = 0; i < oCks.length; i++) {
+				console.log(oCks[i].value);
+			}
+		}
+
+		//更新数据，重新渲染
+		document.getElementById('btn3').onclick = function() {
+			xtree1.render();
+		}
+
+		//通过value值找父级DOM对象，顶级节点与错误值均返回null
+		document.getElementById('btn4').onclick = function() {
+			var oCks = xtree1.GetParent(document.getElementById('txt1').value); //这是方法
+			if (oCks != null) { //如果返回的对象不为null，则获取到父节点了，如果为null，说明这个值对应的节点是一级节点或是值错误
+				console.log(oCks.value);
+			} else {
+				console.log('无父级节点或value值错误');
+			}
+
+		}
+	});
+</script>

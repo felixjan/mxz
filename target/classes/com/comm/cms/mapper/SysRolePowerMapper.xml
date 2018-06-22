@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.comm.cms.mapper.SysRolePowerMapper">
+	 <!-- 实体映射 -->
+	 <resultMap id="BaseResultMap" type="com.comm.cms.pojo.SysRolePower">
+		 <!--主键id-->
+		 <result column="id" property="id" jdbcType="CHAR"/>
+		 <!--角色id-->
+		 <result column="role_id" property="roleId" jdbcType="CHAR"/>
+		 <!--权限id-->
+		 <result column="power_id" property="powerId" jdbcType="CHAR"/>
+		 <!--创建时间-->
+		 <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+	 </resultMap>
+	 <!-- 通用查询条件-->
+	 <sql id="sql_where_clause">
+		 <if test="roleId != null and roleId != ''">
+			 and role_id = #{roleId}
+		 </if>
+		 <if test="powerId != null and powerId != ''">
+			 and power_id = #{powerId}
+		 </if>
+		 <if test="createTime != null and createTime != ''">
+			 and create_time = #{createTime}
+		 </if>
+	 </sql>
+	 <!-- 通用查询结果排序-->
+	 <sql id="sql_order_by_clause">
+		 <choose>
+			 <when test="sortType==1">
+				 order by create_time desc
+			 </when>
+		 </choose>
+	 </sql>
+	 <!-- 通用查询条数限制-->
+	 <sql id="sql_limit_clause">
+		 <choose>
+			 <when test="limitType==1">
+				 <if test="firstResult != null and maxResult != null">
+					 limit #{firstResult}, #{maxResult}
+				 </if>
+			 </when>
+			 <otherwise>limit 1</otherwise>
+		 </choose>
+	 </sql>
+	 <!-- 通用查询结果列-->
+	 <sql id="base_column_list">
+		 id,role_id,power_id,create_time
+	 </sql>
+	 <!-- 查询（根据主键ID查询） -->
+	 <select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		 select 
+		 <include refid="base_column_list" /> 
+		 from sys_role_power
+		 where id = #{id,jdbcType=CHAR}
+	 </select>
+	 <!-- 删除 （根据roleId删除）-->
+	 <delete id="delete" parameterType="java.lang.String">
+	    delete from sys_role_power
+	    where role_id = #{roleId,jdbcType=VARCHAR}
+	 </delete>
+	 <!-- 添加 （动态匹配所有有值字段）-->
+	 <insert id="create" parameterType="java.util.HashMap">
+		 insert into sys_role_power
+		 <trim prefix="(" suffix=")" suffixOverrides=",">
+			 id,
+			 <if test="roleId != null">role_id,</if>
+			 <if test="powerId != null">power_id,</if>
+			 create_time,
+		 </trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides=",">
+			 replace(uuid(),'-',''),
+			 <if test="roleId != null">#{roleId,jdbcType=CHAR},</if>
+			 <if test="powerId != null">#{powerId,jdbcType=CHAR},</if>
+			 now(),
+		 </trim>
+	 </insert>
+	 <!-- 修 改-->
+	 <update id="update" parameterType="java.util.HashMap">
+		 update sys_role_power
+		 <set> 
+			 <if test="roleId != null">role_id = #{roleId,jdbcType=CHAR},</if>
+			 <if test="powerId != null">power_id = #{powerId,jdbcType=CHAR},</if>
+			 <if test="createTime != null and createTime != ''">create_time = #{createTime,jdbcType=TIMESTAMP},</if>
+		 </set>
+		 where id = #{id,jdbcType=CHAR}
+	 </update>
+	 <!-- 查询getList -->
+	 <select id="getList"  parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		 select 
+		 <include refid="base_column_list" /> 
+		 from sys_role_power
+		 where 1=1 
+		 <include refid="sql_where_clause" />
+		 <include refid="sql_order_by_clause" />
+		 <include refid="sql_limit_clause" />
+	 </select>
+	 <!-- 查询geCount -->
+	 <select id="getCount" parameterType="java.util.HashMap" resultType="java.lang.Integer" >
+		 select count(1) 
+		 from sys_role_power
+		 where 1=1 
+		 <include refid="sql_where_clause" />
+	 </select>
+
+</mapper>

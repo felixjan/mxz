@@ -1,0 +1,43 @@
+[{
+    "id": "1",
+    "title": "资源管理",
+    "icon": "&#xe655;",
+    "spread": false,
+    "children": [ {
+        "id": "11",
+        "title": "视频管理",
+        "icon": "&#xe6ed;",
+        "url": "html/cop.html"
+    },{
+        "id": "12",
+        "title": "文库管理",
+        "icon": "&#xe621;",
+        "url": "html/cop.html"
+    }]
+},{
+    "id": "2",
+    "title": "系统管理",
+    "icon": "&#xe716;",
+    "spread": true,
+    "children": [{
+        "id": "21",
+        "title": "部门管理",
+        "icon": "&#xe613;",
+        "url": "cms/sys/department.html"
+    },{
+        "id": "22",
+        "title": "角色管理",
+        "icon": "&#xe66f;",
+        "url": "cms/sys/role.html"
+    }, {
+        "id": "23",
+        "title": "职位管理",
+        "icon": "&#xe612;",
+        "url": "cms/sys/position.html"
+    }, {
+        "id": "24",
+        "title": "用户管理",
+        "icon": "&#xe770;",
+        "url": "cms/sys/user.html"
+    }]
+}]

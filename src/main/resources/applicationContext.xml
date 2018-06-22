@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd 
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+
+	<!-- 加载配置文件 -->
+	<context:property-placeholder ignore-unresolvable="true" location="classpath:jdbc.properties,classpath:config.properties" />
+	<!-- master数据源 -->
+    <bean id="masterDataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <!-- 基本属性 url、user、password -->  
+        <property name="driverClassName" value="${jdbc.driverClassName}" />  
+        <property name="url" value="${jdbc.url}" />  
+        <property name="username" value="${jdbc.username}" />  
+        <property name="password" value="${jdbc.password}" />  
+        <property name="initialSize" value="${jdbc.initialSize}" />  
+        <property name="minIdle" value="${jdbc.minIdle}" />   
+        <property name="maxActive" value="${jdbc.maxActive}" />  
+        <property name="maxWait" value="${jdbc.maxWait}" />
+        <!-- 超过时间限制是否回收 -->
+        <property name="removeAbandoned" value="${jdbc.removeAbandoned}" />
+        <!-- 超过时间限制多长； -->
+        <property name="removeAbandonedTimeout" value="${jdbc.removeAbandonedTimeout}" />
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis" value="${jdbc.timeBetweenEvictionRunsMillis}" />
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="${jdbc.minEvictableIdleTimeMillis}" />
+        <!-- 用来检测连接是否有效的sql，要求是一个查询语句-->
+        <property name="validationQuery" value="${jdbc.validationQuery}" />
+        <!-- 申请连接的时候检测 -->
+        <property name="testWhileIdle" value="${jdbc.testWhileIdle}" />
+        <!-- 申请连接时执行validationQuery检测连接是否有效，配置为true会降低性能 -->
+        <property name="testOnBorrow" value="${jdbc.testOnBorrow}" />
+        <!-- 归还连接时执行validationQuery检测连接是否有效，配置为true会降低性能  -->
+        <property name="testOnReturn" value="${jdbc.testOnReturn}" />
+    </bean>
+    <!-- slave数据源 -->
+    <bean id="slaveDataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <property name="driverClassName" value="${slave.jdbc.driverClassName}" />  
+        <property name="url" value="${slave.jdbc.url}" />  
+        <property name="username" value="${slave.jdbc.username}" />  
+        <property name="password" value="${slave.jdbc.password}" />  
+        <property name="initialSize" value="${slave.jdbc.initialSize}" />  
+        <property name="minIdle" value="${slave.jdbc.minIdle}" />   
+        <property name="maxActive" value="${slave.jdbc.maxActive}" />  
+        <property name="maxWait" value="${slave.jdbc.maxWait}" />
+        <property name="removeAbandoned" value="${slave.jdbc.removeAbandoned}" />
+        <property name="removeAbandonedTimeout" value="${slave.jdbc.removeAbandonedTimeout}" />
+        <property name="timeBetweenEvictionRunsMillis" value="${slave.jdbc.timeBetweenEvictionRunsMillis}" />
+        <property name="minEvictableIdleTimeMillis" value="${slave.jdbc.minEvictableIdleTimeMillis}" />
+        <property name="validationQuery" value="${slave.jdbc.validationQuery}" />
+        <property name="testWhileIdle" value="${slave.jdbc.testWhileIdle}" />
+        <property name="testOnBorrow" value="${slave.jdbc.testOnBorrow}" />
+        <property name="testOnReturn" value="${slave.jdbc.testOnReturn}" />
+    </bean>
+    <!-- logMaster数据源 -->
+    <bean id="logMasterDataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <!-- 基本属性 url、user、password -->  
+        <property name="driverClassName" value="${jdbc.driverClassName}" />  
+        <property name="url" value="${jdbc.url}" />  
+        <property name="username" value="${jdbc.username}" />  
+        <property name="password" value="${jdbc.password}" />  
+        <property name="initialSize" value="${jdbc.initialSize}" />  
+        <property name="minIdle" value="${jdbc.minIdle}" />   
+        <property name="maxActive" value="${jdbc.maxActive}" />  
+        <property name="maxWait" value="${jdbc.maxWait}" />
+        <!-- 超过时间限制是否回收 -->
+        <property name="removeAbandoned" value="${jdbc.removeAbandoned}" />
+        <!-- 超过时间限制多长； -->
+        <property name="removeAbandonedTimeout" value="${jdbc.removeAbandonedTimeout}" />
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis" value="${jdbc.timeBetweenEvictionRunsMillis}" />
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="${jdbc.minEvictableIdleTimeMillis}" />
+        <!-- 用来检测连接是否有效的sql，要求是一个查询语句-->
+        <property name="validationQuery" value="${jdbc.validationQuery}" />
+        <!-- 申请连接的时候检测 -->
+        <property name="testWhileIdle" value="${jdbc.testWhileIdle}" />
+        <!-- 申请连接时执行validationQuery检测连接是否有效，配置为true会降低性能 -->
+        <property name="testOnBorrow" value="${jdbc.testOnBorrow}" />
+        <!-- 归还连接时执行validationQuery检测连接是否有效，配置为true会降低性能  -->
+        <property name="testOnReturn" value="${jdbc.testOnReturn}" />
+    </bean>
+    <!-- logSlave数据源 -->
+    <bean id="logSlaveDataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <property name="driverClassName" value="${slave.jdbc.driverClassName}" />  
+        <property name="url" value="${slave.jdbc.url}" />  
+        <property name="username" value="${slave.jdbc.username}" />  
+        <property name="password" value="${slave.jdbc.password}" />  
+        <property name="initialSize" value="${slave.jdbc.initialSize}" />  
+        <property name="minIdle" value="${slave.jdbc.minIdle}" />   
+        <property name="maxActive" value="${slave.jdbc.maxActive}" />  
+        <property name="maxWait" value="${slave.jdbc.maxWait}" />
+        <property name="removeAbandoned" value="${slave.jdbc.removeAbandoned}" />
+        <property name="removeAbandonedTimeout" value="${slave.jdbc.removeAbandonedTimeout}" />
+        <property name="timeBetweenEvictionRunsMillis" value="${slave.jdbc.timeBetweenEvictionRunsMillis}" />
+        <property name="minEvictableIdleTimeMillis" value="${slave.jdbc.minEvictableIdleTimeMillis}" />
+        <property name="validationQuery" value="${slave.jdbc.validationQuery}" />
+        <property name="testWhileIdle" value="${slave.jdbc.testWhileIdle}" />
+        <property name="testOnBorrow" value="${slave.jdbc.testOnBorrow}" />
+        <property name="testOnReturn" value="${slave.jdbc.testOnReturn}" />
+    </bean>
+    <!-- 动态数据源，根据service接口上的注解来决定取哪个数据源 -->
+    <bean id="dataSource" class="com.comm.dataSource.DynamicDataSource">  
+        <property name="targetDataSources">      
+          <map key-type="java.lang.String">      
+             <!-- read slave -->    
+             <entry key="slave" value-ref="slaveDataSource"/>      
+             <!-- write master   -->  
+             <entry key="master" value-ref="masterDataSource"/>
+             <!-- read logSlave -->    
+             <entry key="logSlave" value-ref="logSlaveDataSource"/>      
+             <!-- write logMaster   -->  
+             <entry key="logMaster" value-ref="logMasterDataSource"/>       
+          </map>               
+        </property>   
+        <property name="defaultTargetDataSource" ref="masterDataSource"/>      
+    </bean>
+	<!-- mapper配置 -->
+	<!-- 让spring管理sqlsessionfactory 使用mybatis和spring整合包中的 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 数据库连接池 -->
+		<property name="dataSource" ref="dataSource" />
+		<!-- 加载mybatis的全局配置文件 -->
+		<property name="configLocation" value="classpath:sqlMapConfig.xml" />
+		<!-- 当mybatis的xml文件和mapper接口不在相同包下时，需要用mapperLocations属性指定xml文件的路径*是个通配符，代表所有的文件，**代表所有目录下 -->   
+		<!-- <property name="mapperLocations" value="classpath:com/comm/*/mapper/*.xml" /> -->
+	</bean>
+	
+	<!-- 配置Mapper扫描器 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.comm.*.mapper"/>
+	</bean>
+	
+	<!-- @Service扫描 -->
+	<context:component-scan base-package="com.mxz.admin.*.*.service.impl"></context:component-scan>
+	<!-- 事务管理器 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<!-- 数据源 -->
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- 注解方式管理事物 -->
+    <!-- <tx:annotation-driven transaction-manager="transactionManager" order="1"/> -->
+    <!-- xml方式管理事物 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<!-- 传播行为 -->
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="create*" propagation="REQUIRED" />
+			<tx:method name="insert*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="remove*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="execute*" propagation="REQUIRED" />
+			<tx:method name="edit*" propagation="REQUIRED" />
+			<tx:method name="find*" propagation="SUPPORTS" read-only="true" />
+			<tx:method name="get*" propagation="SUPPORTS" read-only="true" />
+			<tx:method name="query*" propagation="SUPPORTS" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+	
+    <!-- 收集操作数据库日志 -->    
+    <bean id="logAop" class="com.comm.dataSource.LogAop" /> 
+    <!-- aop注解形式实现aop切面 -->
+    <aop:aspectj-autoproxy /> 
+    <!-- 为业务逻辑层的方法解析@DataSource注解  为当前线程的HandleDataSource注入数据源 -->    
+    <bean id="dataSourceAspect" class="com.comm.dataSource.DataSourceAspect" /> 
+    <aop:config> 
+   		<!-- 定义切面，所有的service的所有方法 -->
+        <aop:pointcut id="txPointcut" expression="execution(* com.mxz.admin.*.*.service.*.*(..))" />
+        <!-- 应用事务策略到Service切面 -->
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut"/>
+        <!-- 将切面应用到自定义的切面处理器上，-9999保证该切面优先级最高执行 -->
+        <aop:aspect ref="dataSourceAspect" order="-9999">
+            <aop:before method="before" pointcut-ref="txPointcut" />
+        </aop:aspect>
+    </aop:config>
+</beans>

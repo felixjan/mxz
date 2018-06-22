@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.comm.cms.mapper.CmsCityMapper">
+	 <!-- 实体映射 -->
+	 <resultMap id="BaseResultMap" type="com.comm.cms.pojo.CmsCity">
+		 <!--主键id-->
+		 <result column="id" property="id" jdbcType="INTEGER"/>
+		 <!--名称-->
+		 <result column="name" property="name" jdbcType="VARCHAR"/>
+		 <!--父id-->
+		 <result column="pid" property="pid" jdbcType="INTEGER"/>
+		 <!--级别-->
+		 <result column="level" property="level" jdbcType="INTEGER"/>
+		 <!--首字母-->
+		 <result column="szm" property="szm" jdbcType="VARCHAR"/>
+		 <!--全拼音-->
+		 <result column="pingyin" property="pingyin" jdbcType="VARCHAR"/>
+	 </resultMap>
+	 <!-- 通用查询条件-->
+	 <sql id="sql_where_clause">
+		 <if test="name != null and name != ''">
+			 and name = #{name}
+		 </if>
+		 <if test="pid != null and pid != -1">
+			 and pid = #{pid}
+		 </if>
+		 <if test="level != null and level != -1">
+			 and level = #{level}
+		 </if>
+		 <if test="szm != null and szm != ''">
+			 and szm = #{szm}
+		 </if>
+		 <if test="pingyin != null and pingyin != ''">
+			 and pingyin = #{pingyin}
+		 </if>
+	 </sql>
+	 <!-- 通用查询结果排序-->
+	 <sql id="sql_order_by_clause">
+		 <choose>
+			 <when test="sortType==1">
+				 order by create_time desc
+			 </when>
+		 </choose>
+	 </sql>
+	 <!-- 通用查询条数限制-->
+	 <sql id="sql_limit_clause">
+		 <choose>
+			 <when test="limitType==1">
+				 <if test="firstResult != null and maxResult != null">
+					 limit #{firstResult}, #{maxResult}
+				 </if>
+			 </when>
+			 <otherwise>limit 1</otherwise>
+		 </choose>
+	 </sql>
+	 <!-- 通用查询结果列-->
+	 <sql id="base_column_list">
+		 id,name,pid,level,szm,pingyin
+	 </sql>
+	 <!-- 查询（根据主键ID查询） -->
+	 <select id="getById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		 select 
+		 <include refid="base_column_list" /> 
+		 from cms_city
+		 where id = #{id,jdbcType=INTEGER}
+	 </select>
+	 <!-- 删除 （根据主键ID删除）-->
+	 <delete id="delete" parameterType="java.lang.String">
+	    delete from cms_city
+	    where id = #{id,jdbcType=VARCHAR}
+	 </delete>
+	 <!-- 添加 （动态匹配所有有值字段）-->
+	 <insert id="create" parameterType="java.util.HashMap">
+		 insert into cms_city
+		 <trim prefix="(" suffix=")" suffixOverrides=",">
+			 id,
+			 <if test="name != null">name,</if>
+			 <if test="pid != null">pid,</if>
+			 <if test="level != null">level,</if>
+			 <if test="szm != null">szm,</if>
+			 <if test="pingyin != null">pingyin,</if>
+		 </trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides=",">
+			 replace(uuid(),'-',''),
+			 <if test="name != null">#{name,jdbcType=VARCHAR},</if>
+			 <if test="pid != null">#{pid,jdbcType=INTEGER},</if>
+			 <if test="level != null">#{level,jdbcType=INTEGER},</if>
+			 <if test="szm != null">#{szm,jdbcType=VARCHAR},</if>
+			 <if test="pingyin != null">#{pingyin,jdbcType=VARCHAR},</if>
+		 </trim>
+	 </insert>
+	 <!-- 修 改-->
+	 <update id="update" parameterType="java.util.HashMap">
+		 update cms_city
+		 <set> 
+			 <if test="name != null">name = #{name,jdbcType=VARCHAR},</if>
+			 <if test="pid != null">pid = #{pid,jdbcType=INTEGER},</if>
+			 <if test="level != null">level = #{level,jdbcType=INTEGER},</if>
+			 <if test="szm != null">szm = #{szm,jdbcType=VARCHAR},</if>
+			 <if test="pingyin != null">pingyin = #{pingyin,jdbcType=VARCHAR},</if>
+		 </set>
+		 where id = #{id,jdbcType=INTEGER}
+	 </update>
+	 <!-- 查询getList -->
+	 <select id="getList"  parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		 select 
+		 <include refid="base_column_list" /> 
+		 from cms_city
+		 where 1=1 
+		 <include refid="sql_where_clause" />
+		 <include refid="sql_order_by_clause" />
+		 <include refid="sql_limit_clause" />
+	 </select>
+	 <!-- 查询geCount -->
+	 <select id="getCount" parameterType="java.util.HashMap" resultType="java.lang.Integer" >
+		 select count(1) 
+		 from cms_city
+		 where 1=1 
+		 <include refid="sql_where_clause" />
+	 </select>
+
+</mapper>

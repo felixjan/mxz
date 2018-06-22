@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.comm.cms.mapper.SysPowerMapper">
+	 <!-- 实体映射 -->
+	 <resultMap id="BaseResultMap" type="com.comm.cms.pojo.SysPower">
+		 <!--主键id-->
+		 <result column="id" property="id" jdbcType="CHAR"/>
+		 <!--父级id-->
+		 <result column="pid" property="pid" jdbcType="CHAR"/>
+		 <!--名称-->
+		 <result column="lable_name" property="lableName" jdbcType="VARCHAR"/>
+		 <!--权限数字索引-->
+		 <result column="power_index" property="powerIndex" jdbcType="INTEGER"/>
+		 <!--权限索引名称-->
+		 <result column="power_name" property="powerName" jdbcType="VARCHAR"/>
+		 <!--webUrl请求地址-->
+		 <result column="web_url" property="webUrl" jdbcType="VARCHAR"/>
+		 <!--图标路径-->
+		 <result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>
+		 <!--可访问的action方法地址-->
+		 <result column="action_url" property="actionUrl" jdbcType="VARCHAR"/>
+		 <!--排序-->
+		 <result column="sort" property="sort" jdbcType="INTEGER"/>
+		 <!--导航|权限-->
+		 <result column="style" property="style" jdbcType="VARCHAR"/>
+		 <!--描述-->
+		 <result column="description" property="description" jdbcType="VARCHAR"/>
+		 <!--目录指引-->
+		 <result column="dir_name" property="dirName" jdbcType="VARCHAR"/>
+		 <!--权限级别-->
+		 <result column="level" property="level" jdbcType="INTEGER"/>
+		 <!--是否是最终节点0.不是1.是-->
+		 <result column="is_final" property="isFinal" jdbcType="INTEGER"/>
+		 <!--创建时间-->
+		 <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+	 </resultMap>
+	 <!-- 通用查询条件-->
+	 <sql id="sql_where_clause">
+	 	 <if test="roleId != null and roleId != ''" >
+        	 and id in (select power_id from sys_role_power where role_id=#{roleId})
+      	 </if>
+		 <if test="pid != null and pid != ''">
+			 and pid = #{pid}
+		 </if>
+		 <if test="lableName != null and lableName != ''">
+			 and lable_name = #{lableName}
+		 </if>
+		 <if test="powerIndex != null and powerIndex != -1">
+			 and power_index = #{powerIndex}
+		 </if>
+		 <if test="powerName != null and powerName != ''">
+			 and power_name = #{powerName}
+		 </if>
+		 <if test="webUrl != null and webUrl != ''">
+			 and web_url = #{webUrl}
+		 </if>
+		 <if test="imageUrl != null and imageUrl != ''">
+			 and image_url = #{imageUrl}
+		 </if>
+		 <if test="actionUrl != null and actionUrl != ''">
+			 and action_url = #{actionUrl}
+		 </if>
+		 <if test="sort != null and sort != -1">
+			 and sort = #{sort}
+		 </if>
+		 <if test="style != null and style != ''">
+			 and style = #{style}
+		 </if>
+		 <if test="description != null and description != ''">
+			 and description = #{description}
+		 </if>
+		 <if test="dirName != null and dirName != ''">
+			 and dir_name = #{dirName}
+		 </if>
+		 <if test="level != null and level != -1">
+			 and level = #{level}
+		 </if>
+		 <if test="isFinal != null and isFinal != -1">
+			 and is_final = #{isFinal}
+		 </if>
+		 <if test="createTime != null and createTime != ''">
+			 and create_time = #{createTime}
+		 </if>
+	 </sql>
+	 <!-- 通用查询结果排序-->
+	 <sql id="sql_order_by_clause">
+		 <choose>
+			 <when test="sortType==1">
+				 order by create_time desc
+			 </when>
+		 </choose>
+	 </sql>
+	 <!-- 通用查询条数限制-->
+	 <sql id="sql_limit_clause">
+		 <choose>
+			 <when test="limitType==1">
+				 <if test="firstResult != null and maxResult != null">
+					 limit #{firstResult}, #{maxResult}
+				 </if>
+			 </when>
+			 <otherwise>limit 1</otherwise>
+		 </choose>
+	 </sql>
+	 <!-- 通用查询结果列-->
+	 <sql id="base_column_list">
+		 id,pid,lable_name,power_index,power_name,web_url,image_url,action_url,sort,style,description,dir_name,level,is_final,create_time
+	 </sql>
+	 <!-- 查询（根据主键ID查询） -->
+	 <select id="getById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		 select 
+		 <include refid="base_column_list" /> 
+		 from sys_power
+		 where id = #{id,jdbcType=CHAR}
+	 </select>
+	 <!-- 删除 （根据主键ID删除）-->
+	 <delete id="delete" parameterType="java.lang.String">
+	    delete from sys_power
+	    where id = #{id,jdbcType=VARCHAR}
+	 </delete>
+	 <!-- 添加 （动态匹配所有有值字段）-->
+	 <insert id="create" parameterType="java.util.HashMap">
+		 insert into sys_power
+		 <trim prefix="(" suffix=")" suffixOverrides=",">
+			 id,
+			 <if test="pid != null">pid,</if>
+			 <if test="lableName != null">lable_name,</if>
+			 <if test="powerIndex != null">power_index,</if>
+			 <if test="powerName != null">power_name,</if>
+			 <if test="webUrl != null">web_url,</if>
+			 <if test="imageUrl != null">image_url,</if>
+			 <if test="actionUrl != null">action_url,</if>
+			 <if test="sort != null">sort,</if>
+			 <if test="style != null">style,</if>
+			 <if test="description != null">description,</if>
+			 <if test="dirName != null">dir_name,</if>
+			 <if test="level != null">level,</if>
+			 <if test="isFinal != null">is_final,</if>
+			 create_time,
+		 </trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides=",">
+			 replace(uuid(),'-',''),
+			 <if test="pid != null">#{pid,jdbcType=CHAR},</if>
+			 <if test="lableName != null">#{lableName,jdbcType=VARCHAR},</if>
+			 <if test="powerIndex != null">#{powerIndex,jdbcType=INTEGER},</if>
+			 <if test="powerName != null">#{powerName,jdbcType=VARCHAR},</if>
+			 <if test="webUrl != null">#{webUrl,jdbcType=VARCHAR},</if>
+			 <if test="imageUrl != null">#{imageUrl,jdbcType=VARCHAR},</if>
+			 <if test="actionUrl != null">#{actionUrl,jdbcType=VARCHAR},</if>
+			 <if test="sort != null">#{sort,jdbcType=INTEGER},</if>
+			 <if test="style != null">#{style,jdbcType=VARCHAR},</if>
+			 <if test="description != null">#{description,jdbcType=VARCHAR},</if>
+			 <if test="dirName != null">#{dirName,jdbcType=VARCHAR},</if>
+			 <if test="level != null">#{level,jdbcType=INTEGER},</if>
+			 <if test="isFinal != null">#{isFinal,jdbcType=INTEGER},</if>
+			 now(),
+		 </trim>
+	 </insert>
+	 <!-- 修 改-->
+	 <update id="update" parameterType="java.util.HashMap">
+		 update sys_power
+		 <set> 
+			 <if test="pid != null">pid = #{pid,jdbcType=CHAR},</if>
+			 <if test="lableName != null">lable_name = #{lableName,jdbcType=VARCHAR},</if>
+			 <if test="powerIndex != null">power_index = #{powerIndex,jdbcType=INTEGER},</if>
+			 <if test="powerName != null">power_name = #{powerName,jdbcType=VARCHAR},</if>
+			 <if test="webUrl != null">web_url = #{webUrl,jdbcType=VARCHAR},</if>
+			 <if test="imageUrl != null">image_url = #{imageUrl,jdbcType=VARCHAR},</if>
+			 <if test="actionUrl != null">action_url = #{actionUrl,jdbcType=VARCHAR},</if>
+			 <if test="sort != null">sort = #{sort,jdbcType=INTEGER},</if>
+			 <if test="style != null">style = #{style,jdbcType=VARCHAR},</if>
+			 <if test="description != null">description = #{description,jdbcType=VARCHAR},</if>
+			 <if test="dirName != null">dir_name = #{dirName,jdbcType=VARCHAR},</if>
+			 <if test="level != null">level = #{level,jdbcType=INTEGER},</if>
+			 <if test="isFinal != null">is_final = #{isFinal,jdbcType=INTEGER},</if>
+			 <if test="createTime != null and createTime != ''">create_time = #{createTime,jdbcType=TIMESTAMP},</if>
+		 </set>
+		 where id = #{id,jdbcType=CHAR}
+	 </update>
+	 <!-- 查询getList -->
+	 <select id="getList"  parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		 select 
+		 <include refid="base_column_list" /> 
+		 from sys_power
+		 where 1=1 
+		 <include refid="sql_where_clause" />
+		 <include refid="sql_order_by_clause" />
+		 <include refid="sql_limit_clause" />
+	 </select>
+	 <!-- 查询geCount -->
+	 <select id="getCount" parameterType="java.util.HashMap" resultType="java.lang.Integer" >
+		 select count(1) 
+		 from sys_power
+		 where 1=1 
+		 <include refid="sql_where_clause" />
+	 </select>
+
+</mapper>

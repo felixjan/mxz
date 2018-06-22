@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>用户管理</title>
+<link rel="stylesheet" href="../../plugins/layui/css/layui.css" media="all">
+<link rel="stylesheet" href="../../plugins/build/css/comm.css" media="all">
+<script src="../../plugins/layui/layui.js"></script>
+</head>
+<body>
+	<div class="layui-fluid margin-top10">
+		<form class="layui-form" action="">
+			<input type="hidden" name="sortType" value="1">
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">用户名</label>
+					<div class="layui-input-inline">
+						<input type="text" name="userName" autocomplete="off"
+							class="layui-input">
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">状态</label>
+					<div class="layui-input-inline">
+						<select name="status">
+							<option value="-1">全部</option>
+							<option value="1">在职</option>
+							<option value="2">离职</option>
+							<option value="3">冻结</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">是否有效</label>
+					<div class="layui-input-inline">
+						<select name="isValid">
+							<option value="-1">全部</option>
+							<option value="0">无效</option>
+							<option value="1">有效</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-inline">
+					<button class="layui-btn layui-btn-radius" lay-submit=""
+						lay-filter="queryMain" id="queryMainBtn">
+						<i class="layui-icon">&#xe615;</i>查询
+					</button>
+				</div>
+			</div>
+		</form>
+		<hr class="layui-bg-orange" />
+		<div class="layui-col-md12">
+			<button class="layui-btn layui-btn-radius hide operateBtn"
+				data-power="add">
+				<i class="layui-icon">&#xe654;</i>添加
+			</button>
+			<button class="layui-btn layui-btn-radius hide operateBtn"
+				data-power="edit">
+				<i class="layui-icon">&#xe642;</i>修改
+			</button>
+			<table id="tabMain" lay-filter="tabFilter"></table>
+		</div>
+	</div>
+</body>
+<!-- 弹出层要放在body外面 -->
+<!-- 数据详情开始 -->
+<div class="baseInfoDiv" style="display: none;">
+	<form class="layui-form layui-tab-content" id="baseInfoForm">
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<input type="hidden" name="id">
+				<label class="layui-form-label">用户名</label>
+				<div class="layui-input-inline">
+					<input type="text" name="userName" autocomplete="off" disabled class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">角色</label>
+				<div class="layui-input-inline">
+					<input type="text" name="roleName" autocomplete="off" disabled class="layui-input">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">所属部门</label>
+				<div class="layui-input-inline">
+					<input type="text" name="departmentName" autocomplete="off" disabled class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">职位</label>
+				<div class="layui-input-inline">
+					<input type="text" name="positionName" autocomplete="off" disabled class="layui-input">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">姓名</label>
+				<div class="layui-input-inline">
+					<input type="text" name="realName" autocomplete="off" disabled class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">生日</label>
+				<div class="layui-input-inline">
+					<input type="text" name="birthday" autocomplete="off" disabled class="layui-input">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">性别</label>
+			<div class="layui-input-inline">
+      			<select name="sex" disabled>
+					<option value="1">男</option>
+					<option value="2">女</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">手机号</label>
+				<div class="layui-input-inline">
+					<input type="text" name="phone" autocomplete="off" disabled class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">邮箱</label>
+				<div class="layui-input-inline">
+					<input type="text" name="email" autocomplete="off" disabled class="layui-input">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">QQ号</label>
+				<div class="layui-input-inline">
+					<input type="text" name="qq" autocomplete="off" disabled class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">微信号</label>
+				<div class="layui-input-inline">
+					<input type="text" name="weiXin" autocomplete="off" disabled class="layui-input">
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">状态</label>
+				<div class="layui-input-inline">
+					<select name="status" disabled>
+						<option value="1">在职</option>
+						<option value="2">离职</option>
+						<option value="3">冻结</option>
+					</select>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">是否有效</label>
+				<div class="layui-input-inline">
+					<select name="isValid" disabled>
+						<option value="0">无效</option>
+						<option value="1">有效</option>
+					</select>
+				</div>
+			</div>	
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">创建时间</label>
+				<div class="layui-input-inline">
+					<input type="text" name="createTime" autocomplete="off" disabled class="layui-input">
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">修改时间</label>
+				<div class="layui-input-inline">
+					<input type="text" name="updateTime" autocomplete="off" disabled class="layui-input">
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+<!-- 数据详情结束 -->
+<!-- 新增开始 -->
+<div class="addInfoDiv" style="display: none;">
+	<form class="layui-form layui-tab-content" action="" id="addInfoForm">
+		<div class="layui-form-item">
+			<label class="layui-form-label">用户名</label>
+			<div class="layui-input-inline">
+				<input type="text" name="userName" lay-verify="userName"
+					autocomplete="off" placeholder="请输入用户名" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">姓名</label>
+			<div class="layui-input-inline">
+				<input type="text" name="realName" lay-verify="realName"
+					autocomplete="off" placeholder="请输入姓名" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<input type="hidden" name="departmentName" class="departmentName">
+			<label class="layui-form-label">所属部门</label>
+			<div class="layui-input-inline">
+				<select name="departmentId"  class="departmentId"
+					lay-verify="departmentId" lay-filter="departmentId">
+					<option value="">请选择</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<input type="hidden" name="positionName" class="positionName">
+			<label class="layui-form-label">职位</label>
+			<div class="layui-input-inline">
+				<select name="positionId" class="positionId"
+					lay-verify="positionId" lay-filter="positionId">
+					<option value="">请选择</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<input type="hidden" name="roleName" class="roleName">
+			<label class="layui-form-label">角色</label>
+			<div class="layui-input-inline">
+				<select name="roleId" class="roleId"
+					lay-verify="roleId" lay-filter="roleId">
+					<option value="">请选择</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">性别</label>
+			<div class="layui-input-inline">
+				<input type="radio" name="sex" value="1" title="男" checked="">
+      			<input type="radio" name="sex" value="2" title="女">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">状态</label>
+			<div class="layui-input-inline">
+				<select name="status">
+					<option value="1">在职</option>
+					<option value="2">离职</option>
+					<option value="3">冻结</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">是否有效</label>
+			<div class="layui-input-inline">
+				<select name="isValid">
+					<option value="0">无效</option>
+					<option value="1">有效</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit lay-filter="addInfoBtn">提交</button>
+				<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+			</div>
+		</div>
+	</form>
+</div>
+<!-- 新增结束 -->
+<!-- 修改开始 -->
+<div class="editInfoDiv" style="display: none;">
+	<form class="layui-form layui-tab-content" action="" id="editInfoForm">
+		<input type="hidden" name="id">
+		<div class="layui-form-item">
+			<label class="layui-form-label">用户名</label>
+			<div class="layui-input-inline">
+				<input type="text" name="userName" lay-verify="userName" disabled class="layui-input"
+					autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">员工姓名</label>
+			<div class="layui-input-inline">
+				<input type="text" name="realName" lay-verify="realName"
+					autocomplete="off" placeholder="请输入姓名" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<input type="hidden" name="departmentName" class="departmentName">
+			<label class="layui-form-label">所属部门</label>
+			<div class="layui-input-inline">
+				<select name="departmentId"  class="departmentId"
+					lay-verify="departmentId" lay-filter="departmentId">
+					<option value="">请选择</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<input type="hidden" name="positionName" class="positionName">
+			<label class="layui-form-label">职位</label>
+			<div class="layui-input-inline">
+				<select name="positionId" class="positionId"
+					lay-verify="positionId" lay-filter="positionId">
+					<option value="">请选择</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<input type="hidden" name="roleName" class="roleName">
+			<label class="layui-form-label">角色</label>
+			<div class="layui-input-inline">
+				<select name="roleId" class="roleId"
+					lay-verify="roleId" lay-filter="roleId">
+					<option value="">请选择</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">性别</label>
+			<div class="layui-input-inline">
+				<input type="radio" name="sex" value="1" title="男" checked="">
+      			<input type="radio" name="sex" value="2" title="女">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">状态</label>
+			<div class="layui-input-inline">
+				<select name="status">
+					<option value="1">在职</option>
+					<option value="2">离职</option>
+					<option value="3">冻结</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">是否有效</label>
+			<div class="layui-input-inline">
+				<select name="isValid">
+					<option value="0">无效</option>
+					<option value="1">有效</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn" lay-submit lay-filter="editInfoBtn">提交</button>
+				<button class="layui-btn layui-btn-primary" lay-submit lay-filter="cancelBtn">取消</button>
+			</div>
+		</div>
+	</form>
+</div>
+<!-- 修改结束 -->
+<script type="text/html" id="barMain">
+  <button class="layui-btn layui-btn-xs hide" lay-event="baseInfoBtn" data-power="query">详情</button>
+</script>
+<script>
+	/* 以下url路径都是相对于当前页面的路径 */
+	/* 公共参数开始 */
+	var $;//全局jquery
+	var basePath='../../../';//相对路径
+	var baseHeight='88%';//新增修改弹出页面的高度设置
+	var queryMainUrl = basePath+'sys/user/getPageList';//列表查询地址
+	var addInfoUrl = basePath+'sys/user/create';//新增地址
+	var editInfoUrl = basePath+'sys/user/update';//修改地址
+	var addInfoTitle = '新增用户信息';//新增弹框标题
+	var editInfoTitle = '修改用户信息';//修改弹框标题
+	/* 公共参数结束 */
+	layui.use(['table','enhanceform'], function() {
+		$ = layui.jquery;//引入jquery
+		var form = layui.form;//引入form
+		var table = layui.table;
+		var enhanceForm = layui.enhanceform;
+		var mainTabForm = {
+			sortType : 1
+		};// 默认按创建时间排序
+		// 第一个实例
+		table.render({
+			id : 'mainTable',
+			elem : '#tabMain',
+			height : 'full-120',
+			url : queryMainUrl, // 数据接口
+			method : 'post', // 传参方式
+			where : {
+				queryJson : JSON.stringify(mainTabForm)
+			},
+			page : true, // 开启分页
+			cols : [ [ // 表头
+			{
+				field : '',
+				type : 'checkbox',
+				fixed : 'left'
+			}, {
+				field : '序号',
+				title : '序号',
+				align : 'center',
+				type : 'numbers'
+			}, {
+				field : 'userName',
+				title : '用户名',
+				align : 'center'
+			}, {
+				field : 'realName',
+				title : '姓名',
+				align : 'center'
+			}, {
+				field : 'departmentName',
+				title : '所属部门',
+				align : 'center'
+			}, {
+				field : 'positionName',
+				title : '职位',
+				align : 'center'
+			}, {
+				field : 'roleName',
+				title : '角色',
+				align : 'center'
+			}, {
+				field : 'sex',
+				title : '性别',
+				align : 'center'
+			}, {
+				field : 'mobile',
+				title : '手机号',
+				align : 'center'
+			}, {
+				field : 'status',
+				title : '状态',
+				align : 'center'
+			}, {
+				field : 'updateTime',
+				title : '修改时间',
+				align : 'center'
+			}, {
+				field : 'createTime',
+				title : '创建时间',
+				align : 'center'
+			}, {
+				field : 'isValid',
+				title : '是否有效',
+				align : 'center'
+			}, {
+				field : '操作',
+				title : '操作',
+				align : 'center',
+				toolbar: '#barMain'
+			} ] ],
+			done : function(resData, page, count) {
+				// 如果是异步请求数据方式，resData即为你接口返回的信息。
+				// 如果是直接赋值的方式，resData即为：{data: [], count: 99} data为当前页数据、count为数据总长度
+				if(resData.responseCode!=undefined && resData.responseCode==1){
+					toLogin();//超时重新登录
+				}else{
+					var powerId=$('.layui-this[lay-id]', parent.document)[0].getAttribute('lay-id');//获取导航id即powerId
+					getUserPower(powerId);//用户权限
+				}
+				$("[data-field='sex']").children().each(function() {
+					if ($(this).text() == '1') {
+						$(this).text("男");
+					} else if ($(this).text() == '2') {
+						$(this).text("女");
+					}
+				});
+				$("[data-field='status']").children().each(function() {
+					if ($(this).text() == '1') {
+						$(this).text("在职");
+					} else if ($(this).text() == '2') {
+						$(this).text("离职");
+					} else if ($(this).text() == '3') {
+						$(this).text("冻结");
+					}
+				});
+				$("[data-field='isValid']").children().each(function() {
+					if ($(this).text() == '0') {
+						$(this).text("无效");
+					} else if ($(this).text() == '1') {
+						$(this).text("有效");
+					}
+				});
+			}
+		});
+		//部门初始化列表查询
+		$.ajax({
+			url : basePath+'sys/department/getList',
+			type : 'post',
+			dataType : 'json',
+			contentType : 'application/json',
+		 	data : JSON.stringify({
+				limitType : 1,
+				isValid : 1
+			}),
+			success : function(resData) {
+				for (var i = 0; i < resData.length; i++) {
+					$('.departmentId').append("<option value="+resData[i].id+">" + resData[i].departmentName + "</option>");
+				}
+				form.render("select");//渲染
+			}
+		});
+		//角色初始化列表查询
+		$.ajax({
+	        url: basePath+'sys/role/getList',
+	        type: 'post',
+	        dataType : 'json',
+	        contentType : 'application/json',
+	        data : JSON.stringify({
+				limitType : 1,
+				isValid : 1
+			}),
+	        success: function (resData) {
+	        	$(".roleId").empty();
+	        	$('.roleId').append("<option value=''>请选择</option>");
+	        	for (var i = 0; i < resData.length; i++) {
+					$('.roleId').append("<option value="+resData[i].id+">" + resData[i].roleName + "</option>");
+				}
+	        	form.render("select");//渲染
+	        }
+	    }); 
+		//监听tabMain工具条
+		table.on('tool(tabFilter)', function(obj) { //注：tool是工具条事件名，tabFilter是table原始容器的属性 lay-filter="对应的值"
+			var data = obj.data ;//获得当前行数据
+			var layEvent = obj.event; //获得 lay-event 对应的值
+			if (layEvent === 'baseInfoBtn') {//数据详情查询
+				var infoForEdit = data;
+				/* 自动给表单赋值开始 */
+				enhance = new enhanceForm({
+					elem : '#baseInfoForm' // 表单选择器 表单id
+				});
+				enhance.filling(infoForEdit);
+				/* 自动给表单赋值结束 */
+				$('.baseInfoDiv').show();
+				layer.open({
+					type : 1,
+					title : '详情信息',
+					area: ['auto','85%'],
+					content : $('#baseInfoForm'),// 这里content是一个DOM，注意：最好该元素要存放在body最外层，否则可能被其它的相对元素所影响
+					end : function() {
+						$('.baseInfoDiv').hide();
+					}
+				});
+			}
+		});
+		form.on('select(departmentId)', function(data) {
+			if (data.value != "") {
+				$('.departmentName').val(data.elem[data.elem.selectedIndex].text);
+				$.ajax({
+			        url: basePath+'sys/position/getList',
+			        type: 'post',
+			        dataType : 'json',
+			        contentType : 'application/json',
+			        data : JSON.stringify({
+						departmentId : data.value,
+						limitType : 1,
+						isValid : 1
+					}),
+			        success: function (resData) {
+			        	$(".positionId").empty();
+			        	$('.positionId').append("<option value=''>请选择</option>");
+			        	for (var i = 0; i < resData.length; i++) {
+							$('.positionId').append("<option value="+resData[i].id+">" + resData[i].positionName + "</option>");
+						}
+			        	form.render("select");//渲染
+			        }
+			    }); 
+			} else {
+				$('.departmentName').val('');
+			}
+		});
+		form.on('select(positionId)', function(data) {
+			if (data.value != "") {
+				$('.positionName').val(data.elem[data.elem.selectedIndex].text);
+			} else {
+				$('.positionName').val('');
+			}
+		});
+		form.on('select(roleId)', function(data) {
+			if (data.value != "") {
+				$('.roleName').val(data.elem[data.elem.selectedIndex].text);
+			} else {
+				$('.roleName').val('');
+			}
+		});
+		// 自定义验证规则
+		form.verify({
+			userName : function(value) {
+				if (value.length < 4) {
+					return '用户名至少得4个字符';
+				}
+			},
+			realName : function(value) {
+				if (value.length < 2) {
+					return '姓名至少得2个字符';
+				}
+			},
+			departmentId : function(value) {
+				if (value.length == 0) {
+					return '请选择所属部门';
+				}
+			},
+			positionId : function(value) {
+				if (value.length == 0) {
+					return '请选择职位';
+				}
+			},
+			roleId : function(value) {
+				if (value.length == 0) {
+					return '请选择角色';
+				}
+			}
+		});
+	});
+</script>
+<script src="../../plugins/build/js/comminfo.js"></script>
+</html>

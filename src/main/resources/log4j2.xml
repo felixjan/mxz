@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="OFF" monitorInterval="1800">
+	<properties>
+		<!--${sys:catalina.home}表示linux中环境变量中的tomcat根目录 -->
+		<property name="log_path">${sys:catalina.home}/mxzLogs</property>
+		<property name="info_name">info</property>
+		<property name="error_name">error</property>
+		<property name="baseInfo_name">baseInfo</property>
+	</properties>
+	<appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout charset="UTF-8" pattern="[%p][%d{yyyy-MM-dd HH:mm:ss.SSS}][%F][%M:%L] - %m%n" />
+		</Console>
+		<RollingFile name="infoLog" fileName="${log_path}/${info_name}.log"
+			filePattern="${log_path}/$${date:yyyy-MM}/${info_name}-%d{yyyy-MM-dd}-%i.log.gz" immediateFlush="true">
+			<Filters>
+				<ThresholdFilter level="INFO" />
+				<ThresholdFilter level="WARN" onMatch="DENY" onMismatch="NEUTRAL" /><!-- 排除过滤打印信息 -->
+			</Filters>
+			<PatternLayout charset="UTF-8" pattern="[%p][%d{yyyy-MM-dd HH:mm:ss.SSS}][%F][%M:%L] - %m%n" />
+			<Policies>
+				<!-- 归档每天的文件 interval默认值为1 modulate表示是否调整时间间隔以使在时间间隔边界发生下一个rollover-->
+				<!-- interval中的值取决于filePattern中定义的时间格式，如果%d{yyyyy-MM-dd HH:mm:ss}则interval="120"则是间隔120秒生成一个日志文件，如果时间格式为%d{yyyyy-MM-dd HH:mm}则interval="2"则是间隔2分钟后生成一个日志文件 -->
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+				<!-- 限制单个文件大小 触发保存日志文件的条件是日志文件大于100 MB -->  
+				<SizeBasedTriggeringPolicy size="100 MB" />
+			</Policies>
+			<!-- 限制每天文件个数 只保存最新的10个日志 -->
+			<!-- compressionLevel设置压缩级别0-9，其中0=无，1=最佳速度，通过9=最佳压缩。只适用于ZIP文件。 -->
+			<DefaultRolloverStrategy compressionLevel="0" max="10" />
+		</RollingFile>
+		<!-- 打印error级别以下的日志 -->
+		<RollingFile name="errorLog" fileName="${log_path}/${error_name}.log"
+			filePattern="${log_path}/$${date:yyyy-MM}/${error_name}-%d{yyyy-MM-dd}-%i.log">
+			<ThresholdFilter level="ERROR" />
+			<PatternLayout charset="UTF-8" pattern="[%p][%d{yyyy-MM-dd HH:mm:ss.SSS}][%F][%M:%L] - %m%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+				<SizeBasedTriggeringPolicy size="100 MB" />
+			</Policies>
+			<DefaultRolloverStrategy compressionLevel="0" max="10" />
+		</RollingFile>
+		<RollingFile name="baseInfoLog" fileName="${log_path}/${baseInfo_name}.log"
+			filePattern="${log_path}/$${date:yyyy-MM}/${baseInfo_name}-%d{yyyy-MM-dd}-%i.log.gz">
+			<Filters>
+				<ThresholdFilter level="INFO" />
+				<ThresholdFilter level="WARN" onMatch="DENY" onMismatch="NEUTRAL" /><!-- 排除过滤打印信息 -->
+			</Filters>
+			<PatternLayout charset="UTF-8" pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}]%m%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+				<SizeBasedTriggeringPolicy size="100 MB" />
+			</Policies>
+			<DefaultRolloverStrategy compressionLevel="0" max="10" />
+		</RollingFile>
+		<!-- 配置mongdb appender -->
+	</appenders>
+	<loggers>
+		<root level="DEBUG"><!-- 设置打印级别 -->
+			<!-- 这里是输入到控制台 -->
+			<appenderRef ref="Console" />
+			<!-- 这里是输入到文件，很重要 -->
+			<appender-ref ref="infoLog" />
+			<appender-ref ref="errorLog" />
+		</root>
+        <Logger name="com.comm.dataSource.LogAop" level="DEBUG" additivity="false"> 
+            <appenderRef ref="Console" /> 
+            <appender-ref ref="baseInfoLog" />
+            <appender-ref ref="errorLog" />
+        </Logger>
+	</loggers>
+</configuration>

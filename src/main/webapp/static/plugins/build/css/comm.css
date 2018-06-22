@@ -1,0 +1,40 @@
+form input.layui-input[disabled] {
+	background: #f2f2f2;
+	color: #595963 !important;
+}
+
+form .layui-select-disabled .layui-disabled {
+	background: #f2f2f2;
+	color: #595963 !important;
+}
+
+form .layui-disabled, .layui-disabled:hover{
+	background: #f2f2f2;
+	color: #595963 !important;
+}
+
+.hide{
+	display: none;
+}
+
+.layui-upload-img {
+    width: 100px;
+    height: 100px;
+    margin: 0 10px 10px 0;
+}
+
+.margin-top5{
+	margin-top: 5px;
+}
+
+.margin-top10{
+	margin-top: 10px;
+}
+
+.margin-top15{
+	margin-top: 15px;
+}
+
+.margin-top20{
+	margin-top: 20px;
+}
